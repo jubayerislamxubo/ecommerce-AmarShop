@@ -8,45 +8,36 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
     }),
   ],
-  // 👇 এই লাইনটিই সবথেকে জরুরি - এটি অ্যাকাউন্ট লিংকিংয়ের সিকিউরিটি ব্লক দূর করে দেয়
+  // অ্যাকাউন্ট লিংকিং সংক্রান্ত সিকিউরিটি ব্লক চিরতরে বন্ধ করার জন্য
   allowDangerousEmailAccountLinking: true,
   
   session: {
     strategy: "jwt",
   },
+  
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account.provider === "google") {
-        try {
-          await connectDB();
-          
-          const existingUser = await User.findOne({ email: user.email });
+    async signIn({ user }) {
+      try {
+        await connectDB();
+        
+        let existingUser = await User.findOne({ email: user.email });
 
-          if (!existingUser) {
-            await User.create({
-              name: user.name || profile?.name || "Google User",
-              email: user.email,
-              phone: "N/A",
-              password: "",
-              role: "user",
-            });
-          }
-          return true;
-        } catch (error) {
-          console.error("Error in Google Sign-In:", error);
-          return false;
+        if (!existingUser) {
+          await User.create({
+            name: user.name || "Google User",
+            email: user.email,
+            phone: "N/A",
+            password: "",
+            role: "user",
+          });
         }
+        return true;
+      } catch (error) {
+        console.error("SignIn Error:", error);
+        return true;
       }
-      return true;
     },
     async jwt({ token, user }) {
       if (user) {
