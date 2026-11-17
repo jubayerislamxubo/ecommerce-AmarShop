@@ -8,42 +8,60 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
-  // allowDangerousEmailAccountLinking সরিয়ে দিলাম যাতে কোনো কনফ্লিক্ট বা সিকিউরিটি ইস্যু না করে
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account.provider === "google") {
         try {
           await connectDB();
           
-          // চেক করি এই ইমেইলের কোনো ইউজার ডাটাবেজে আছে কি না
+          // ডাটাবেজে চেক করি এই ইমেইলের কোনো ইউজার আছে কি না
           let existingUser = await User.findOne({ email: user.email });
 
           if (!existingUser) {
-            // যদি না থাকে, তবে নতুন ইউজার তৈরি করে নেব (পাসওয়ার্ড ছাড়া, কারণ এটি গুগল লগইন)
+            // যদি না থাকে, তবে নতুন ইউজার তৈরি করে নেব
             await User.create({
               name: user.name || profile?.name || "Google User",
               email: user.email,
-              phone: "N/A", // গুগল সাইন-ইনে ফোন থাকে না
+              phone: "N/A", // গুগল সাইন-ইনে ফোন থাকে না বলে ডিফল্ট মান
               password: "",  // পাসওয়ার্ড ফাকা থাকবে
               role: "user",
             });
           }
           return true;
         } catch (error) {
-          console.error("Error saving google user to database:", error);
+          console.error("Error in Google Sign-In:", error);
           return false;
         }
       }
       return true;
     },
-    async session({ session }) {
-      await connectDB();
-      const dbUser = await User.findOne({ email: session.user.email });
-      if (dbUser) {
-        session.user.id = dbUser._id.toString();
-        session.user.role = dbUser.role;
+    async jwt({ token, user }) {
+      if (user) {
+        await connectDB();
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.role = dbUser.role;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.role = token.role;
       }
       return session;
     },
