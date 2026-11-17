@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next/providers/google"; // যদি কোনো কারণে আগের ইমপোর্টে সমস্যা হয়, তবে NextAuth প্রোভাইডার ইমপোর্ট ঠিক রাখবেন
+import GoogleProvider from "next-auth/providers/google";
 import { connectDB } from "@/lib/mongodb";
 import mongoose from "mongoose";
 
