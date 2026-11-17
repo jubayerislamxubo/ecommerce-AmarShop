@@ -26,16 +26,14 @@ const handler = NextAuth({
         try {
           await connectDB();
           
-          // ডাটাবেজে চেক করি এই ইমেইলের কোনো ইউজার আছে কি না
           let existingUser = await User.findOne({ email: user.email });
 
           if (!existingUser) {
-            // যদি না থাকে, তবে নতুন ইউজার তৈরি করে নেব
             await User.create({
               name: user.name || profile?.name || "Google User",
               email: user.email,
-              phone: "N/A", // গুগল সাইন-ইনে ফোন থাকে না বলে ডিফল্ট মান
-              password: "",  // পাসওয়ার্ড ফাকা থাকবে
+              phone: "N/A",
+              password: "",
               role: "user",
             });
           }
