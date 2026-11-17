@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import connectDB from "@/lib/mongodb";
+import GoogleProvider from "next/providers/google"; // যদি কোনো কারণে আগের ইমপোর্টে সমস্যা হয়, তবে NextAuth প্রোভাইডার ইমপোর্ট ঠিক রাখবেন
+import { connectDB } from "@/lib/mongodb";
 import mongoose from "mongoose";
 
 const handler = NextAuth({
@@ -19,7 +19,7 @@ const handler = NextAuth({
   ],
   allowDangerousEmailAccountLinking: true,
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       if (account.provider === "google") {
         try {
           await connectDB();
