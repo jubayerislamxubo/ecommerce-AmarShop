@@ -26,8 +26,10 @@ const handler = NextAuth({
         try {
           await connectDB();
           
-          let existingUser = await User.findOne({ email: user.email });
+          // চেক করি ইউজার আগে থেকে আছে কি না
+          const existingUser = await User.findOne({ email: user.email });
 
+          // যদি ইউজার ডাটাবেজে না থাকে, তবেই কেবল নতুন ইউজার তৈরি করবে
           if (!existingUser) {
             await User.create({
               name: user.name || profile?.name || "Google User",
