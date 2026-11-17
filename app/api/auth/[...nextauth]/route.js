@@ -17,6 +17,9 @@ const handler = NextAuth({
       }
     }),
   ],
+  // 👇 এই লাইনটিই সবথেকে জরুরি - এটি অ্যাকাউন্ট লিংকিংয়ের সিকিউরিটি ব্লক দূর করে দেয়
+  allowDangerousEmailAccountLinking: true,
+  
   session: {
     strategy: "jwt",
   },
@@ -26,10 +29,8 @@ const handler = NextAuth({
         try {
           await connectDB();
           
-          // চেক করি ইউজার আগে থেকে আছে কি না
           const existingUser = await User.findOne({ email: user.email });
 
-          // যদি ইউজার ডাটাবেজে না থাকে, তবেই কেবল নতুন ইউজার তৈরি করবে
           if (!existingUser) {
             await User.create({
               name: user.name || profile?.name || "Google User",
