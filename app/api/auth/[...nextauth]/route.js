@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import clientPromise from "@/lib/mongodb";
+import connectDB from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 const handler = NextAuth({
   providers: [
@@ -21,14 +22,25 @@ const handler = NextAuth({
     async signIn({ user, account, profile }) {
       if (account.provider === "google") {
         try {
-          const client = await clientPromise;
-          const db = client.db();
+          await connectDB();
+          const db = mongoose.connection.db;
           
           const existingUser = await db.collection("users").findOne({ email: user.email });
           if (existingUser) {
             await db.collection("accounts").updateOne(
               { userId: existingUser._id },
-              { $set: { providerAccountId: account.providerAccountId } },
+              { 
+                $set: { 
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  type: account.type,
+                  access_token: account.access_token,
+                  expires_at: account.expires_at,
+                  id_token: account.id_token,
+                  token_type: account.token_type,
+                  scope: account.scope
+                } 
+              },
               { upsert: true }
             );
           }
