@@ -20,6 +20,7 @@ const OrderSchema = new mongoose.Schema(
         title: String,
         price: Number,
         quantity: Number,
+        size: String, // 👈 এখানে সাইজ ফিল্ড যুক্ত করে দেওয়া হয়েছে
         image: String,
       },
     ],
