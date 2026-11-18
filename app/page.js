@@ -370,7 +370,7 @@ export default function Home() {
             <div className="flex-1 max-w-lg relative">
               <input
                 type="text"
-                placeholder="আপনার পছন্দের পণ্য সার্চ করুন..."
+                placeholder="Search In AmarShop..."
                 value={searchQuery}
                 onChange={handleSearch}
                 className="w-full border border-slate-200 bg-slate-50/50 rounded-full py-2.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all shadow-inner"
@@ -383,7 +383,7 @@ export default function Home() {
             <div className="flex items-center gap-3">
               {session ? (
                 <div className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200/70 px-3 py-1.5 rounded-full border border-slate-200 transition">
-                  <Link href="/profile" className="flex items-center gap-2.5 cursor-pointer" title="প্রোফাইল দেখুন">
+                  <Link href="/profile" className="flex items-center gap-2.5 cursor-pointer" title="View Profile">
                     <img
                       src={session.user?.image}
                       alt={session.user?.name || "Profile"}
@@ -397,7 +397,7 @@ export default function Home() {
                   <button
                     onClick={() => signOut()}
                     className="text-red-500 hover:text-red-700 p-1.5 rounded-full cursor-pointer transition ml-1"
-                    title="লগআউট করুন"
+                    title="Logout"
                   >
                     <FaSignOutAlt size={14} />
                   </button>
@@ -642,9 +642,9 @@ export default function Home() {
                   onChange={handleSortChange}
                   className="text-xs font-bold text-slate-700 bg-transparent focus:outline-none cursor-pointer"
                 >
-                  <option value="default">সাজান: ডিফল্ট</option>
-                  <option value="low-to-high">দাম: কম থেকে বেশি</option>
-                  <option value="high-to-low">দাম: বেশি থেকে কম</option>
+                  <option value="default">Default </option>
+                  <option value="low-to-high">Low to High</option>
+                  <option value="high-to-low">High to Low</option>
                 </select>
               </div>
             </div>
@@ -717,14 +717,14 @@ export default function Home() {
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/" className="hover:text-orange-400 transition flex items-center gap-2">👉 হোম পেজ</Link>
+                <Link href="/" className="hover:text-orange-400 transition flex items-center gap-2">👉 Home</Link>
               </li>
               <li>
-                <Link href="/profile" className="hover:text-orange-400 transition flex items-center gap-2">👉 ইউজার প্রোফাইল</Link>
+                <Link href="/profile" className="hover:text-orange-400 transition flex items-center gap-2">👉 User Profile</Link>
               </li>
               {isAdmin && (
                 <li>
-                  <Link href="/admin" className="hover:text-orange-400 transition flex items-center gap-2">⚙️ অ্যাডমিন ড্যাশবোর্ড</Link>
+                  <Link href="/admin" className="hover:text-orange-400 transition flex items-center gap-2">⚙️ Admin Dashboard</Link>
                 </li>
               )}
             </ul>
